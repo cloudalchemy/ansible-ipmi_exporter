@@ -1,0 +1,36 @@
+---
+- name: Gather variables for each operating system
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution_file_variety | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags:
+    - ipmi_exporter_install
+    - ipmi_exporter_configure
+    - ipmi_exporter_run
+
+- import_tasks: preflight.yml
+  tags:
+    - ipmi_exporter_install
+    - ipmi_exporter_configure
+    - ipmi_exporter_run
+
+- import_tasks: install.yml
+  become: true
+  tags:
+    - ipmi_exporter_install
+
+- import_tasks: configure.yml
+  become: true
+  tags:
+    - ipmi_exporter_configure
+
+- name: Ensure ipmi_exporter is enabled on boot
+  become: true
+  systemd:
+    daemon_reload: true
+    name: ipmi_exporter
+    enabled: true
+  tags:
+    - ipmi_exporter_run

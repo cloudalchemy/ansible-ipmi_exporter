@@ -1,0 +1,7 @@
+---
+- name: restart ipmi_exporter
+  become: true
+  systemd:
+    daemon_reload: true
+    name: ipmi_exporter
+    state: restarted

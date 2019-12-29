@@ -1,0 +1,19 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=ipmi_exporter
+After=network-online.target
+StartLimitInterval=0
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User={{ ipmi_exporter_system_user }}
+Group={{ ipmi_exporter_system_group }}
+ExecStart=/usr/local/bin/ipmi_exporter
+SyslogIdentifier=ipmi_exporter
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
