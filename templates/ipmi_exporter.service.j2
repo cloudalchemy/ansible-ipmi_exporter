@@ -10,8 +10,16 @@ StartLimitIntervalSec=0
 Type=simple
 User={{ ipmi_exporter_system_user }}
 Group={{ ipmi_exporter_system_group }}
-ExecStart=/usr/local/bin/ipmi_exporter
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/local/bin/ipmi_exporter \
+  --config.file=/etc/ipmi_exporter.yml \
+  {% for flag, flag_value in ipmi_exporter_cli_flags.items() -%}
+  --{{ flag }}={{ flag_value }} \
+  {% endfor -%}
+  --web.listen-address={{ ipmi_exporter_web_listen_address }}
+
 SyslogIdentifier=ipmi_exporter
+KillMode=process
 Restart=always
 RestartSec=5
 

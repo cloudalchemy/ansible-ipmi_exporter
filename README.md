@@ -19,7 +19,11 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 
 | Name           | Default Value | Description                        |
 | -------------- | ------------- | -----------------------------------|
+| `ipmi_exporter_version` | 1.4.0 | Blackbox exporter package version |
 | `ipmi_exporter_web_listen_address` | "0.0.0.0:9290" | Address on which ipmi_exporter will listen |
+| `ipmi_exporter_cli_flags` | {} | Additional configuration flags passed to ipmi_exporter binary at startup |
+| `ipmi_exporter_configuration_modules` | default: { collector_cmd: {ipmi: sudo, sel: sudo, dcmi: sudo, bmc: sudo, chassis: sudo}, custom_args: { ipmi: ["ipmimonitoring"], sel: ["ipmi-sel"],  dcmi: ["ipmi-dcmi"], bmc: ["bmc-info"],  chassis: ["ipmi-chassis"]}} | |
+
 
 ## Example
 
