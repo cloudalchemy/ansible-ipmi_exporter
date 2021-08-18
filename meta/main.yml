@@ -24,6 +24,9 @@ galaxy_info:
         - 30
         - 31
   galaxy_tags:
+    - exporter
     - monitoring
+    - prometheus
+    - metrics
 
 dependencies: []

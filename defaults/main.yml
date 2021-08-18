@@ -1,2 +1,31 @@
 ---
+ipmi_exporter_version: 1.4.0
+
 ipmi_exporter_web_listen_address: "0.0.0.0:9290"
+
+ipmi_exporter_cli_flags: {}
+# ipmi_exporter_cli_flags:
+#   log.level: "info" # Valid levels: [debug, info, warn, error, fatal]
+#   log.format: "logger:stderr" # Set the log target and format. Example: "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
+#   freeipmi.path: "FREEIPMI.PATH" # Path to FreeIPMI executables (default: rely on $PATH).
+
+# https://github.com/soundcloud/ipmi_exporter/blob/master/ipmi_remote.yml
+ipmi_exporter_configuration_modules:
+  default:
+    collector_cmd:
+      ipmi: sudo
+      sel: sudo
+      dcmi: sudo
+      bmc: sudo
+      chassis: sudo
+    custom_args:
+      ipmi:
+        - "ipmimonitoring"
+      sel:
+        - "ipmi-sel"
+      dcmi:
+        - "ipmi-dcmi"
+      bmc:
+        - "bmc-info"
+      chassis:
+        - "ipmi-chassis"

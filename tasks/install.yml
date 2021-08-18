@@ -14,3 +14,62 @@
     system: true
     createhome: false
     home: /
+
+- name: Add ipmi_exporter to sudo
+  copy:
+    dest: "/etc/sudoers.d/{{ ipmi_exporter_system_user }}"
+    content: >
+      {{ ipmi_exporter_system_user }} ALL = NOPASSWD: {{ commands | join(',') }}
+    mode: '0440'
+    validate: 'visudo -csf %s'
+  vars:
+    commands:
+      - /usr/sbin/ipmimonitoring
+      - /usr/sbin/ipmi-sensors
+      - /usr/sbin/ipmi-dcmi
+      - /usr/sbin/ipmi-raw
+      - /usr/sbin/bmc-info
+      - /usr/sbin/ipmi-chassis
+      - /usr/sbin/ipmi-sel
+
+- name: Check includedir in sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    line: "#includedir /etc/sudoers.d"
+    state: present
+    validate: "/usr/sbin/visudo -csf %s"
+
+- name: download ipmi_exporter binary to local folder
+  become: false
+  unarchive:
+    src: "https://github.com/soundcloud/ipmi_exporter/releases/download/v{{ ipmi_exporter_version }}/ipmi_exporter-{{ ipmi_exporter_version }}.linux-{{ go_arch }}.tar.gz"
+    dest: "/tmp"
+    remote_src: true
+    creates: "/tmp/ipmi_exporter-{{ ipmi_exporter_version }}.linux-{{ go_arch }}/ipmi_exporter"
+  register: _download_binary
+  until: _download_binary is succeeded
+  retries: 5
+  delay: 2
+  delegate_to: localhost
+  check_mode: false
+
+- name: propagate ipmi_exporter binary
+  copy:
+    src: "/tmp/ipmi_exporter-{{ ipmi_exporter_version }}.linux-{{ go_arch }}/ipmi_exporter"
+    dest: "/usr/local/bin/ipmi_exporter"
+    mode: 0750
+    owner: "{{ ipmi_exporter_system_user }}"
+    group: "{{ ipmi_exporter_system_group }}"
+  notify:
+    - restart ipmi_exporter
+
+- name: Install ipmi dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ ipmi_packages }}"
+  register: _install_packages
+  until: _install_packages is succeeded
+  retries: 5
+  delay: 2
+

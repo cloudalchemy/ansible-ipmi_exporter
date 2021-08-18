@@ -1,0 +1,25 @@
+---
+- name: Run role
+  hosts: all
+  any_errors_fatal: true
+  roles:
+    - ansible-ipmi_exporter
+  vars:
+    ipmi_exporter_web_listen_address: "127.0.0.1:9000"
+    ipmi_exporter_cli_flags:
+      log.level: "warn"
+    ipmi_exporter_configuration_modules:
+      advanced:
+        # Use these settings when scraped with module=advanced.
+        user: "some_user"
+        pass: "secret_pw"
+        privilege: "admin"
+        driver: "LAN"
+        collectors:
+          - ipmi
+          - sel
+        custom_args:
+          ipmi:
+            - "ipmimonitoring"
+          sel:
+            - "ipmi-sel"

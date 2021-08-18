@@ -7,3 +7,13 @@
     group: root
     mode: 0644
   notify: restart ipmi_exporter
+
+- name: configure ipmi_exporter
+  template:
+    src: ipmi_exporter.yml.j2
+    dest: /etc/ipmi_exporter.yml
+    owner: "{{ ipmi_exporter_system_user }}"
+    group: "{{ ipmi_exporter_system_group }}"
+    mode: 0644
+  notify:
+    - reload ipmi_exporter
